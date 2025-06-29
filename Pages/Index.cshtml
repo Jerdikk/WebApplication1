@@ -1,0 +1,109 @@
+﻿@page
+@using Microsoft.AspNetCore.Hosting
+@inject IWebHostEnvironment _env
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    var webRootPath = _env.WebRootPath;
+    var files = Directory.GetFiles(webRootPath);
+    var directories = Directory.GetDirectories(webRootPath);
+
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Text Example</title>
+    <style>
+        .clickable-text {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            margin: 10px;
+            padding: 5px;
+        }
+
+            .clickable-text:hover {
+                background-color: #f0f0f0;
+            }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            min-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+
+  @*   <div>
+        <p class="clickable-text" name="text" onclick="sendRequest(this)">First clickable text</p>
+        <p class="clickable-text" name="text" onclick="sendRequest(this)">Second clickable text</p>
+        <p class="clickable-text" name="text" onclick="sendRequest(this)">Third clickable text</p>
+    </div> *@
+
+    <div id="result">
+        Server response will appear here
+    </div>
+
+    <h1>Домашний каталог: @webRootPath</h1>
+
+    <h2>Файлы</h2>
+    <ul>
+        @foreach (var file in files)
+        {
+            <li><p class="clickable-text" name="text" onclick="sendRequest(this)">@file</p></li>
+        }
+    </ul>
+
+    <h2>Папки</h2>
+    <ul>
+        @foreach (var directory in directories)
+        {
+            <li><p class="clickable-text" name="text" onclick="sendRequest(this)">@directory</p></li>
+        }
+    </ul>
+
+
+    <script>
+        function sendRequest(element) {
+            const text = element.innerText;
+            document.getElementById('result').innerText = "Sending request...";
+            console.log(element.innerText);
+            console.log(text);
+            // Используем fetch API для отправки запроса на сервер
+            fetch('?handler=TextClick', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(text)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('result').innerText = "Server response: " + data;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = "Error: " + error.message;
+                });
+            console.log("234");
+        }
+    </script>
+    @Html.AntiForgeryToken()
+
+</body>
