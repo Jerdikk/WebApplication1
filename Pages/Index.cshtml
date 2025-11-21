@@ -5,9 +5,8 @@
 @{
     ViewData["Title"] = "Home page";
     var webRootPath = _env.WebRootPath;
-    var files = Directory.GetFiles(webRootPath);
-    var directories = Directory.GetDirectories(webRootPath);
-
+    //var files = Directory.GetFiles(webRootPath);
+    //var directories = Directory.GetDirectories(webRootPath);
 }
 
 <head>
@@ -36,9 +35,7 @@
     </style>
 </head>
 
-<body>
-
-
+<body>    
 
     <div class="text-center">
         <h1 class="display-4">Welcome</h1>
@@ -59,7 +56,7 @@
 
     <h2>Файлы</h2>
     <ul>
-        @foreach (var file in files)
+        @foreach (var file in @Model.files)
         {
             <li><p class="clickable-text" name="text" onclick="sendRequest(this)">@file</p></li>
         }
@@ -67,7 +64,7 @@
 
     <h2>Папки</h2>
     <ul>
-        @foreach (var directory in directories)
+        @foreach (var directory in @Model.directories)
         {
             <li><p class="clickable-text" name="text" onclick="sendRequest(this)">@directory</p></li>
         }
